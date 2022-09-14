@@ -19,3 +19,37 @@ the problems which may result by upgrading your kernel.
 
 
 sudo apt-get install libssl-dev
+
+安装工具
+sudo apt install u-boot-tools
+
+出现Could not get lock /var/lib/dpkg/lock-frontend - open 执行以下两句
+
+　　sudo rm /var/lib/dpkg/lock-frontend
+
+　　sudo rm /var/lib/dpkg/lock
+
+
+
+mkimage -A arm -O linux -T kernel -C none -a 0x46000000 -e 0x46000000 -n linux-5.19.6 -d zImage uImage
+
+设置tf卡的sdb1为FAT16
+
+sudo cp uImage /dev/sdb1
+
+sudo cp sun8i-h3-orangepi-lite.dtb /dev/sdb1
+
+
+load mmc 0:1 0x43000000 sun8i-h3-orangepi-lite.dtb
+
+load mmc 0:1 0x42000000 uImage
+
+
+bootm 0x42000000 - 0x43000000
+
+
+
+
+setenv bootargs console=ttyS0,115200 root=/dev/mmcblk0p2 rootwait panic=10
+setenv bootcmd 'load mmc 0:1 0x43000000 sun8i-h3-orangepi-lite.dtb; load mmc 0:1 0x42000000 uImage; bootm 0x42000000 - 0x43000000'
+saveenv
